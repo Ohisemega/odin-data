@@ -188,6 +188,7 @@ void LiveViewPlugin::requestConfiguration(OdinData::IpcMessage& reply)
   reply.set_param(get_name() + "/" + LiveViewPlugin::CONFIG_FRAME_FREQ, frame_freq_);
   reply.set_param(get_name() + "/" + LiveViewPlugin::CONFIG_SOCKET_ADDR, image_view_socket_addr_);
   reply.set_param(get_name() + "/" + LiveViewPlugin::CONFIG_PER_SECOND, per_second_);
+  reply.set_param(get_name() + "/" + LiveViewPlugin::CONFIG_DATASET_NAME, names_cnfg);
 }
 
 /**
@@ -387,18 +388,19 @@ void LiveViewPlugin::set_dataset_name_config(std::string value)
     
     boost::split(dataset_names, value, boost::is_any_of(delim));
     std::for_each(dataset_names.begin(), dataset_names.end(), [this](std::string& name)
-    {
-      boost::trim(name);
-      datasets_.insert(std::pair<std::string, int>(name, 0));
-    });
+      {
+        boost::trim(name);
+        datasets_.insert(std::pair<std::string, int>(name, 0));
+      }
+    );
   }
 
   //loop to log datasets
-  std::string dataset_string = "";
+  names_cnfg = "";
   for (int i = 0; i < dataset_names.size(); i++) {
-    dataset_string += dataset_names[i] + ":";
+    names_cnfg += dataset_names[i] + ":";
   }
-  LOG4CXX_INFO(logger_, "Setting the datasets allowed to: " << dataset_string);
+  LOG4CXX_INFO(logger_, "Setting the datasets allowed to: " << names_cnfg);
 }
 
 void LiveViewPlugin::set_tagged_filter_config(std::string value)
